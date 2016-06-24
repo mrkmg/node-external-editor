@@ -6,7 +6,7 @@ var rl = readline.createInterface({
   output: null
 });
 
-var message = '\n\n' + '# Please Write a message\n' + '# Any line starting with # is ignored';
+var message = '\n\n# Please Write a message\n# Any line starting with # is ignored';
 
 process.stdout.write('Please write a message. (press enter to launch your preferred editor)');
 
