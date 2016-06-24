@@ -15,7 +15,7 @@ editor = new ExternalEditor(message);
 rl.on('line', function () {
   try {
     // Get response, remove all lines starting with #, remove any trailing newlines.
-    var response = editor.run().replace(/^#.*\n?/gm, '').replace(/\n+$/g, '');
+    var response = editor.run().replace(/^#.*\n?/gm, '').replace(/\n+$/g, '').trim();
 
     if (response.length === 0) {
       readline.moveCursor(process.stdout, 0, -1);
