@@ -1,7 +1,7 @@
 # External Editor
 A node module to edit a string with a users preferred text editor using $VISUAL or $ENVIRONMENT.
 
-Version: 1.0.0
+Version: 1.0.1
 
 ##Install
 
@@ -21,28 +21,38 @@ A full featured example
     
     try {
         var editor = new ExternalEditor();
-        editor.run()
-        // the data is now available in editor.data
-        
-        // eventually call the cleanup to remove the temporary file
-        editor.cleanup()
-    } catch (error) {
-        if (error instanceOf ExternalEditor.CreateFileError)
+        var text = editor.run()
+        // the text is also available in editor.text
+    } catch (err) {
+        if (err instanceOf ExternalEditor.CreateFileError) {
             console.log('Failed to create the temporary file');
-        else if (error instanceOf ExternalEditor.ReadFileError)
+        } else if (err instanceOf ExternalEditor.ReadFileError) {
             console.log('Failed to read the temporary file');
-        else if (error instanceOf ExternalEditor.RemoveFileError)
-            console.log('Failed to remove the temporary file');
-        else if (error instanceOf ExternalEditor.LaunchEditorError)
+        } else if (err instanceOf ExternalEditor.LaunchEditorError) {
             console.log('Failed to launch your editor');
-        
+        } else {
+            throw err;
+        }
+    }
+    
+    // Do things with the text
+    
+    // Eventually call the cleanup to remove the temporary file
+    try {
+        editor.cleanup();   
+    } catch (err) {
+         if (err instanceOf ExternalEditor.RemoveFileError) {
+             console.log('Failed to remove the temporary file');
+         } else {
+            throw err
+        }
     }
     
     
 ####API
 **Static Methods**
 - `edit(text)`
-    - `text` (string) *Optional* Defaults to ''
+    - `text` (string) *Optional* Defaults to empty string
     - **Returns** (string) The contents of the file
     - Could throw `CreateFileError`, `ReadFileError`, or `LaunchEditorError`, or `RemoveFileError`
 
@@ -54,7 +64,7 @@ A full featured example
 
 **Public Methods**
 - `new ExternalEditor(text)`
-    - `text` (string) *Optional* Defaults to ''
+    - `text` (string) *Optional* Defaults to empty string
     - Could throw `CreateFileError`
 - `run()` Launches the editor.
     - **Returns** (string) The contents of the file
@@ -64,10 +74,15 @@ A full featured example
     
 **Public Properties**
 - `text` (string) *readonly* The text in the temporary file.
-- `editor.bin` (string) The editor determined from the environment. Can be overridden.
+- `editor.bin` (string) The editor determined from the environment.
 - `editor.args` (array) Default arguments for the bin
 - `temp_file` (string) Path to temporary file. Can be changed, but be careful as the temporary file probably already 
-    exists
+    exists and would need be removed manually.
+    
+##Errors
+
+All errors have a simple message explaining what went wrong. They all also have an `original_error` property containing
+the original error thrown for debugging purposes.
     
 ##Why Synchronous?
  
