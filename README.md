@@ -1,4 +1,10 @@
 # External Editor
+
+[![ExternalEditor on Travis CI](https://img.shields.io/travis/mrkmg/node-external-editor.svg?style=flat-square)](https://travis-ci.org/mrkmg/node-external-editor/branches)
+[![ExternalEditor on NPM](https://img.shields.io/npm/v/external-editor.svg?style=flat-square)](https://www.npmjs.com/package/external-editor)
+[![ExternalEditor uses the MIT](https://img.shields.io/npm/l/external-editor.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
+
 A node module to edit a string with a users preferred text editor using $VISUAL or $ENVIRONMENT.
 
 Version: 1.0.1
