@@ -91,6 +91,10 @@ async launching of the editor can lead to issues when using readline or other pa
 write to stdout. Seeing as this will be used in an interactive CLI environment, I made the decision to force the package
 to be synchronous. If you know a reliable way to force all stdin and stdout to be limited only to the child_process,
 please submit a PR.
+
+##Demo
+
+[![asciicast](https://asciinema.org/a/a1qh9lypbe65mj0ivfuoslz2s.png)](https://asciinema.org/a/a1qh9lypbe65mj0ivfuoslz2s)
     
 ##License
 
