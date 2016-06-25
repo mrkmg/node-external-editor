@@ -1,0 +1,9 @@
+sudo: false
+node_js:
+  - 6
+  - 5
+  - 4
+  - .12
+  - .10
+language: node_js
+script: npm test

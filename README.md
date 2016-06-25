@@ -14,7 +14,7 @@ A simple example using the `.edit` convenience method
     var ExternalEditor = require('external-editor')
     var data = ExternalEditor.edit('\n\n# Please write your text above');
     console.log(data);
-    
+
 A full featured example
 
     var ExternalEditor = require('external-editor');
@@ -51,10 +51,10 @@ A full featured example
     
 ####API
 **Static Methods**
-- `edit(text)`
-    - `text` (string) *Optional* Defaults to empty string
-    - **Returns** (string) The contents of the file
-    - Could throw `CreateFileError`, `ReadFileError`, or `LaunchEditorError`, or `RemoveFileError`
+    - `edit(text)`
+        - `text` (string) *Optional* Defaults to empty string
+        - **Returns** (string) The contents of the file
+        - Could throw `CreateFileError`, `ReadFileError`, or `LaunchEditorError`, or `RemoveFileError`
 
 **Static Properties**
 - `CreateFileError` Error thrown if the temporary file could not be created. 
