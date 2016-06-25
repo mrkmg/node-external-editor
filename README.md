@@ -1,7 +1,13 @@
 # External Editor
+
+[![ExternalEditor on Travis CI](https://img.shields.io/travis/mrkmg/node-external-editor.svg?style=flat-square)](https://travis-ci.org/mrkmg/node-external-editor/branches)
+[![ExternalEditor on NPM](https://img.shields.io/npm/v/external-editor.svg?style=flat-square)](https://www.npmjs.com/package/external-editor)
+[![ExternalEditor uses the MIT](https://img.shields.io/npm/l/external-editor.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
+
 A node module to edit a string with a users preferred text editor using $VISUAL or $ENVIRONMENT.
 
-Version: 1.0.1
+Version: 1.0.2
 
 ##Install
 
@@ -14,7 +20,7 @@ A simple example using the `.edit` convenience method
     var ExternalEditor = require('external-editor')
     var data = ExternalEditor.edit('\n\n# Please write your text above');
     console.log(data);
-    
+
 A full featured example
 
     var ExternalEditor = require('external-editor');
@@ -51,10 +57,10 @@ A full featured example
     
 ####API
 **Static Methods**
-- `edit(text)`
-    - `text` (string) *Optional* Defaults to empty string
-    - **Returns** (string) The contents of the file
-    - Could throw `CreateFileError`, `ReadFileError`, or `LaunchEditorError`, or `RemoveFileError`
+    - `edit(text)`
+        - `text` (string) *Optional* Defaults to empty string
+        - **Returns** (string) The contents of the file
+        - Could throw `CreateFileError`, `ReadFileError`, or `LaunchEditorError`, or `RemoveFileError`
 
 **Static Properties**
 - `CreateFileError` Error thrown if the temporary file could not be created. 
@@ -91,6 +97,10 @@ async launching of the editor can lead to issues when using readline or other pa
 write to stdout. Seeing as this will be used in an interactive CLI environment, I made the decision to force the package
 to be synchronous. If you know a reliable way to force all stdin and stdout to be limited only to the child_process,
 please submit a PR.
+
+##Demo
+
+[![asciicast](https://asciinema.org/a/a1qh9lypbe65mj0ivfuoslz2s.png)](https://asciinema.org/a/a1qh9lypbe65mj0ivfuoslz2s)
     
 ##License
 
