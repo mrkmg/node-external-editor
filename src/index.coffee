@@ -1,3 +1,8 @@
+###
+  ExternalEditor
+  Kevin Gravier <kevin@mrkmg.com>
+  MIT
+###
 
 FS = require 'fs'
 Temp = require 'temp'
