@@ -1,0 +1,8 @@
+{
+  "pre_commit_commands": [
+    "npm test"
+  ],
+  "post_complete_commands": [
+    "npm publish"
+  ]
+}
