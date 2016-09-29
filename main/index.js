@@ -7,7 +7,7 @@
  */
 
 (function() {
-  var CreateFileError, ExternalEditor, FS, LaunchEditorError, ReadFileError, RemoveFileError, SpawnSync, Temp,
+  var CreateFileError, ExternalEditor, FS, LaunchEditorError, ReadFileError, RemoveFileError, Spawn, SpawnSync, Temp,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   FS = require('fs');
@@ -15,6 +15,8 @@
   Temp = require('temp');
 
   SpawnSync = require('spawn-sync');
+
+  Spawn = require('child_process').spawn;
 
   CreateFileError = require('./errors/CreateFileError');
 
@@ -36,6 +38,30 @@
       return editor.text;
     };
 
+    ExternalEditor.editAsync = function(text, callback) {
+      var editor;
+      if (text == null) {
+        text = '';
+      }
+      editor = new ExternalEditor(text);
+      return editor.runAsync(function(error_run, response) {
+        var error, error_cleanup;
+        if (!error_run) {
+          try {
+            editor.cleanup();
+          } catch (error) {
+            error_cleanup = error;
+            if (typeof callback === 'function') {
+              callback(error_cleanup);
+            }
+          }
+          return callback(null, response);
+        } else {
+          return callback(error_run) in typeof callback === 'function';
+        }
+      });
+    };
+
     ExternalEditor.CreateFileError = CreateFileError;
 
     ExternalEditor.ReadFileError = ReadFileError;
@@ -55,12 +81,14 @@
 
     function ExternalEditor(text1) {
       this.text = text1 != null ? text1 : '';
+      this.launchEditorAsync = bind(this.launchEditorAsync, this);
       this.launchEditor = bind(this.launchEditor, this);
       this.removeTemporaryFile = bind(this.removeTemporaryFile, this);
       this.readTemporaryFile = bind(this.readTemporaryFile, this);
       this.createTemporaryFile = bind(this.createTemporaryFile, this);
       this.determineEditor = bind(this.determineEditor, this);
       this.cleanup = bind(this.cleanup, this);
+      this.runAsync = bind(this.runAsync, this);
       this.run = bind(this.run, this);
       this.determineEditor();
       this.createTemporaryFile();
@@ -69,6 +97,33 @@
     ExternalEditor.prototype.run = function() {
       this.launchEditor();
       return this.readTemporaryFile();
+    };
+
+    ExternalEditor.prototype.runAsync = function(callback) {
+      var error, error_launch;
+      try {
+        return this.launchEditorAsync((function(_this) {
+          return function() {
+            var error, error_read;
+            try {
+              _this.readTemporaryFile();
+              if (typeof callback === 'function') {
+                return callback(null, _this.text);
+              }
+            } catch (error) {
+              error_read = error;
+              if (typeof callback === 'function') {
+                return callback(error_read);
+              }
+            }
+          };
+        })(this));
+      } catch (error) {
+        error_launch = error;
+        if (typeof callback === 'function') {
+          return callback(error_launch);
+        }
+      }
     };
 
     ExternalEditor.prototype.cleanup = function() {
@@ -120,6 +175,23 @@
       try {
         return SpawnSync(this.bin, this.args.concat([this.temp_file]), {
           stdio: 'inherit'
+        });
+      } catch (error) {
+        e = error;
+        throw new LaunchEditorError(e);
+      }
+    };
+
+    ExternalEditor.prototype.launchEditorAsync = function(callback) {
+      var child_process, e, error;
+      try {
+        child_process = Spawn(this.bin, this.args.concat([this.temp_file]), {
+          stdio: 'inherit'
+        });
+        return child_process.on('exit', function() {
+          if (typeof callback === 'function') {
+            return callback();
+          }
         });
       } catch (error) {
         e = error;

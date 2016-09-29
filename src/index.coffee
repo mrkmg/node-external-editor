@@ -7,6 +7,7 @@
 FS = require 'fs'
 Temp = require 'temp'
 SpawnSync = require 'spawn-sync'
+Spawn = require('child_process').spawn
 
 CreateFileError = require './errors/CreateFileError'
 ReadFileError = require './errors/ReadFileError'
@@ -19,6 +20,19 @@ class ExternalEditor
     editor.run()
     editor.cleanup()
     editor.text
+
+  @editAsync: (text = '', callback) ->
+    editor = new ExternalEditor(text)
+    editor.runAsync (error_run, response) ->
+      if not error_run
+        try
+          editor.cleanup()
+        catch error_cleanup
+          callback(error_cleanup) if typeof callback is 'function'
+        callback(null, response)
+      else
+        callback(error_run) of typeof callback is 'function'
+
 
   @CreateFileError: CreateFileError
   @ReadFileError: ReadFileError
@@ -38,6 +52,17 @@ class ExternalEditor
   run: =>
     @launchEditor()
     @readTemporaryFile()
+
+  runAsync: (callback) =>
+    try
+      @launchEditorAsync =>
+        try
+          @readTemporaryFile()
+          callback(null, @text) if typeof callback is 'function'
+        catch error_read
+          callback(error_read) if typeof callback is 'function'
+    catch error_launch
+      callback(error_launch) if typeof callback is 'function'
 
   cleanup: =>
     @removeTemporaryFile()
@@ -71,6 +96,13 @@ class ExternalEditor
   launchEditor: =>
     try
       SpawnSync @bin, @args.concat([@temp_file]), stdio: 'inherit'
+    catch e
+      throw new LaunchEditorError e
+
+  launchEditorAsync: (callback) =>
+    try
+      child_process = Spawn @bin, @args.concat([@temp_file]), stdio: 'inherit'
+      child_process.on 'exit', -> callback() if typeof callback is 'function'
     catch e
       throw new LaunchEditorError e
 

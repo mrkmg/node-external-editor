@@ -1,7 +1,5 @@
 assert = require('chai').assert
-
 readFileSync = require('fs').readFileSync
-
 ExternalEditor = require('../../src')
 
 describe 'main', ->
@@ -20,21 +18,31 @@ describe 'main', ->
 
   it 'convenience method ".edit"', ->
     text = ExternalEditor.edit 'XXX'
-
     assert.equal text, 'X'
+
+  it 'convenience method ".editAsync"', (cb) ->
+    ExternalEditor.editAsync 'XXX', (e, text) ->
+      assert.equal text, 'X'
+      cb()
 
   it 'writes original text to file', ->
     contents = readFileSync this.editor.temp_file
-
     assert.equal contents, 'XXX'
 
   it 'run() returns correctly', ->
     text = @editor.run()
-
     assert.equal text, 'X'
 
-  it 'returned text same as editor.text', ->
-    returned_result = @editor.run()
+  it 'runAsync() callbacks correctly', (cb) ->
+    @editor.runAsync (e, text) ->
+      assert.equal text, 'X'
+      cb()
 
-    assert.equal returned_result, @editor.text
+  it 'run() returns text same as editor.text', ->
+    text = @editor.run()
+    assert.equal text, @editor.text
 
+  it 'runAsync() callback text same as editor.text', (cb) ->
+    @editor.runAsync (e, text) =>
+      assert.equal text, @editor.text
+      cb()
