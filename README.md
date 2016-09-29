@@ -57,10 +57,16 @@ A full featured example
     
 ####API
 **Static Methods**
-    - `edit(text)`
-        - `text` (string) *Optional* Defaults to empty string
-        - **Returns** (string) The contents of the file
-        - Could throw `CreateFileError`, `ReadFileError`, or `LaunchEditorError`, or `RemoveFileError`
+- `edit(text)`
+    - `text` (string) *Optional* Defaults to empty string
+    - **Returns** (string) The contents of the file
+    - Could throw `CreateFileError`, `ReadFileError`, or `LaunchEditorError`, or `RemoveFileError`
+- `editAsync(text, callback)`
+    - `text` (string) *Optional* Defaults to empty string
+    - `callback` (function (error, text))
+        - `error` could be of type `CreateFileError`, `ReadFileError`, or `LaunchEditorError`, or `RemoveFileError`
+        - `text`(string) The contents of the file     
+
 
 **Static Properties**
 - `CreateFileError` Error thrown if the temporary file could not be created. 
@@ -74,7 +80,11 @@ A full featured example
     - Could throw `CreateFileError`
 - `run()` Launches the editor.
     - **Returns** (string) The contents of the file
-    - Could throw `LaunchEditorError` or `ReadFileError` 
+    - Could throw `LaunchEditorError` or `ReadFileError`
+- `runAsync(callback)` Launches the editor in an async way
+    - `callback` (function (error, text))
+        - `error` could be of type `ReadFileError` or `LaunchEditorError`
+        - `text`(string) The contents of the file
 - `cleanup()`  Removes the temporary file.
     - Could throw `RemoveFileError`
     
@@ -97,6 +107,10 @@ async launching of the editor can lead to issues when using readline or other pa
 write to stdout. Seeing as this will be used in an interactive CLI environment, I made the decision to force the package
 to be synchronous. If you know a reliable way to force all stdin and stdout to be limited only to the child_process,
 please submit a PR.
+
+If async is really needed, you can use `editAsync` or `runAsync`. If you are using readline or have anything else
+listening to the stdin or you write to stdout, you will most likely have problem, so make sure to remove any other 
+listeners on stdin, stdout, or stdin.
 
 ##Demo
 

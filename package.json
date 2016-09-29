@@ -38,6 +38,7 @@
   },
   "files": [
     "main",
-    "example.js"
+    "example_sync.js",
+    "example_async.js"
   ]
 }
