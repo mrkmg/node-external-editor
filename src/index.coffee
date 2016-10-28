@@ -5,7 +5,7 @@
 ###
 
 FS = require 'fs'
-Temp = require 'temp'
+Temp = require 'tmp'
 SpawnSync = require 'spawn-sync'
 Spawn = require('child_process').spawn
 
@@ -76,7 +76,7 @@ class ExternalEditor
 
   createTemporaryFile: =>
     try
-      @temp_file = Temp.path()
+      @temp_file = Temp.tmpNameSync {}
       FS.writeFileSync @temp_file, @text
     catch e
       throw new CreateFileError e
