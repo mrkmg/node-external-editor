@@ -1,6 +1,6 @@
 {
   "name": "external-editor",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Edit a string with the users preferred text editor using $VISUAL or $ENVIRONMENT",
   "main": "main/index.js",
   "scripts": {
@@ -28,7 +28,7 @@
   "dependencies": {
     "extend": "^3.0.0",
     "spawn-sync": "^1.0.15",
-    "temp": "^0.8.3"
+    "tmp": "^0.0.29"
   },
   "devDependencies": {
     "chai": "^3.5.0",
