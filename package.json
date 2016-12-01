@@ -27,8 +27,10 @@
   "homepage": "https://github.com/mrkmg/node-external-editor#readme",
   "dependencies": {
     "extend": "^3.0.0",
-    "spawn-sync": "^1.0.15",
     "tmp": "^0.0.31"
+  },
+  "engines": {
+    "node": ">=0.12"
   },
   "devDependencies": {
     "chai": "^3.5.0",

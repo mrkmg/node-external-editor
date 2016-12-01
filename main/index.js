@@ -14,7 +14,7 @@
 
   Temp = require('tmp');
 
-  SpawnSync = require('spawn-sync');
+  SpawnSync = require('child_process').spawnSync;
 
   Spawn = require('child_process').spawn;
 
