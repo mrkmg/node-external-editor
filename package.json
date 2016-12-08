@@ -1,6 +1,6 @@
 {
   "name": "external-editor",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Edit a string with the users preferred text editor using $VISUAL or $ENVIRONMENT",
   "main": "main/index.js",
   "scripts": {
@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/mrkmg/node-external-editor#readme",
   "dependencies": {
-    "extend": "^3.0.0",
     "tmp": "^0.0.31"
   },
   "engines": {
