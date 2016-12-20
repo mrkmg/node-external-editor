@@ -35,7 +35,7 @@
     "chai": "^3.5.0",
     "coffee-script": "^1.10.0",
     "coffeelint": "^1.14.2",
-    "mocha": "^2.5.3"
+    "mocha": "^3.2.0"
   },
   "files": [
     "main",
