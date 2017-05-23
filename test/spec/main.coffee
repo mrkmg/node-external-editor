@@ -1,5 +1,7 @@
 assert = require('chai').assert
 readFileSync = require('fs').readFileSync
+writeFileSync = require('fs').writeFileSync
+IConvLite = require 'iconv-lite'
 ExternalEditor = require('../../src')
 
 describe 'main', ->
@@ -26,7 +28,7 @@ describe 'main', ->
       cb()
 
   it 'writes original text to file', ->
-    contents = readFileSync this.editor.temp_file
+    contents = readFileSync @editor.temp_file
     assert.equal contents, 'XXX'
 
   it 'run() returns correctly', ->
@@ -46,3 +48,38 @@ describe 'main', ->
     @editor.runAsync (e, text) =>
       assert.equal text, @editor.text
       cb()
+
+describe 'charsets', ->
+  before ->
+    @previous_visual = process.env.VISUAL
+    process.env.VISUAL = 'true'
+
+  beforeEach ->
+    @editor = new ExternalEditor 'XXX'
+
+  afterEach ->
+    @editor.cleanup()
+
+  after ->
+    process.env.VISUAL = @previous_visual
+
+  it 'utf8', ->
+    writeFileSync(@editor.temp_file, IConvLite.encode('काचं शक्नोम्यत्तुम् । नोपहिनस्ति माम् ॥', 'utf8'), encoding: 'binary')
+    text = @editor.run()
+    assert.equal text, 'काचं शक्नोम्यत्तुम् । नोपहिनस्ति माम् ॥'
+
+  it 'utf16', ->
+    writeFileSync(@editor.temp_file, IConvLite.encode('काचं शक्नोम्यत्तुम् । नोपहिनस्ति माम् ॥', 'utf16'), encoding: 'binary')
+    text = @editor.run()
+    assert.equal text, 'काचं शक्नोम्यत्तुम् । नोपहिनस्ति माम् ॥'
+
+  it 'win1252', ->
+    writeFileSync(@editor.temp_file, IConvLite.encode('abc 123 ‰åþ', 'win1252'), encoding: 'binary')
+    text = @editor.run()
+    assert.equal text, 'abc 123 ‰åþ'
+
+  it 'Big5', ->
+    writeFileSync(@editor.temp_file, IConvLite.encode('一一一一', 'Big5'), encoding: 'binary')
+    text = @editor.run()
+    assert.equal text, '一一一一'
+
