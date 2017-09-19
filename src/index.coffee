@@ -88,6 +88,7 @@ class ExternalEditor
   readTemporaryFile: =>
     try
       buffer = FS.readFileSync(@temp_file)
+      return @text = '' unless buffer.length
       encoding = JSCharDet.detect(buffer)
       @text = IConvLite.decode(buffer, encoding.encoding)
     catch e
