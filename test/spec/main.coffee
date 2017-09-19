@@ -63,6 +63,11 @@ describe 'charsets', ->
   after ->
     process.env.VISUAL = @previous_visual
 
+  it 'empty', ->
+    writeFileSync(@editor.temp_file, '')
+    text = @editor.run()
+    assert.equal text, ''
+
   it 'utf8', ->
     writeFileSync(@editor.temp_file, IConvLite.encode('काचं शक्नोम्यत्तुम् । नोपहिनस्ति माम् ॥', 'utf8'), encoding: 'binary')
     text = @editor.run()
