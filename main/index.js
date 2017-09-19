@@ -162,6 +162,9 @@
       var buffer, e, encoding;
       try {
         buffer = FS.readFileSync(this.temp_file);
+        if (!buffer.length) {
+          return this.text = '';
+        }
         encoding = JSCharDet.detect(buffer);
         return this.text = IConvLite.decode(buffer, encoding.encoding);
       } catch (error) {
