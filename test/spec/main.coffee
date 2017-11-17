@@ -4,13 +4,16 @@ writeFileSync = require('fs').writeFileSync
 IConvLite = require 'iconv-lite'
 ExternalEditor = require('../../src')
 
+testingInput = 'aAbBcCdDeEfFgG'
+expectedResult = 'aAbBcCdDeE'
+
 describe 'main', ->
   before ->
     @previous_visual = process.env.VISUAL
-    process.env.VISUAL = 'truncate --size 1'
+    process.env.VISUAL = 'truncate --size 10'
 
   beforeEach ->
-    @editor = new ExternalEditor 'XXX'
+    @editor = new ExternalEditor testingInput
 
   afterEach ->
     @editor.cleanup()
@@ -19,25 +22,25 @@ describe 'main', ->
     process.env.VISUAL = @previous_visual
 
   it 'convenience method ".edit"', ->
-    text = ExternalEditor.edit 'XXX'
-    assert.equal text, 'X'
+    text = ExternalEditor.edit testingInput
+    assert.equal text, expectedResult
 
   it 'convenience method ".editAsync"', (cb) ->
-    ExternalEditor.editAsync 'XXX', (e, text) ->
-      assert.equal text, 'X'
+    ExternalEditor.editAsync testingInput, (e, text) ->
+      assert.equal text, expectedResult
       cb()
 
   it 'writes original text to file', ->
     contents = readFileSync @editor.temp_file
-    assert.equal contents, 'XXX'
+    assert.equal contents, testingInput
 
   it 'run() returns correctly', ->
     text = @editor.run()
-    assert.equal text, 'X'
+    assert.equal text, expectedResult
 
   it 'runAsync() callbacks correctly', (cb) ->
     @editor.runAsync (e, text) ->
-      assert.equal text, 'X'
+      assert.equal text, expectedResult
       cb()
 
   it 'run() returns text same as editor.text', ->
@@ -79,12 +82,12 @@ describe 'charsets', ->
     assert.equal text, 'काचं शक्नोम्यत्तुम् । नोपहिनस्ति माम् ॥'
 
   it 'win1252', ->
-    writeFileSync(@editor.temp_file, IConvLite.encode('abc 123 ‰åþ', 'win1252'), encoding: 'binary')
+    writeFileSync(@editor.temp_file, IConvLite.encode('Testing 1 2 3 ! @ #', 'win1252'), encoding: 'binary')
     text = @editor.run()
-    assert.equal text, 'abc 123 ‰åþ'
+    assert.equal text, 'Testing 1 2 3 ! @ #'
 
   it 'Big5', ->
-    writeFileSync(@editor.temp_file, IConvLite.encode('一一一一', 'Big5'), encoding: 'binary')
+    writeFileSync(@editor.temp_file, IConvLite.encode('能 脊 胼 胯 臭 臬 舀 舐 航 舫 舨 般 芻 茫 荒 荔', 'Big5'), encoding: 'binary')
     text = @editor.run()
-    assert.equal text, '一一一一'
+    assert.equal text, '能 脊 胼 胯 臭 臬 舀 舐 航 舫 舨 般 芻 茫 荒 荔'
 

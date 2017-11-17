@@ -26,8 +26,8 @@
   },
   "homepage": "https://github.com/mrkmg/node-external-editor#readme",
   "dependencies": {
+    "chardet": "^0.4.0",
     "iconv-lite": "^0.4.17",
-    "jschardet": "^1.4.2",
     "tmp": "^0.0.33"
   },
   "engines": {

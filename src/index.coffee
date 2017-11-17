@@ -8,15 +8,13 @@ FS = require 'fs'
 Temp = require 'tmp'
 SpawnSync = require('child_process').spawnSync
 Spawn = require('child_process').spawn
-JSCharDet = require 'jschardet'
 IConvLite = require 'iconv-lite'
+ChatDet = require 'chardet'
 
 CreateFileError = require './errors/CreateFileError'
 ReadFileError = require './errors/ReadFileError'
 RemoveFileError = require './errors/RemoveFileError'
 LaunchEditorError = require './errors/LaunchEditorError'
-
-JSCharDet.Constants.MINIMUM_THRESHOLD = 0
 
 class ExternalEditor
   @edit: (text = '') ->
@@ -81,7 +79,7 @@ class ExternalEditor
   createTemporaryFile: =>
     try
       @temp_file = Temp.tmpNameSync {}
-      FS.writeFileSync(@temp_file, @text, encoding: 'utf8')
+      FS.writeFileSync @temp_file, @text, encoding: 'utf8'
     catch e
       throw new CreateFileError e
 
@@ -89,8 +87,8 @@ class ExternalEditor
     try
       buffer = FS.readFileSync(@temp_file)
       return @text = '' unless buffer.length
-      encoding = JSCharDet.detect(buffer)
-      @text = IConvLite.decode(buffer, encoding.encoding)
+      encoding = ChatDet.detect buffer
+      @text = IConvLite.decode buffer, encoding
     catch e
       throw new ReadFileError e
 
