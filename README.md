@@ -29,8 +29,11 @@ A full featured example
     
     try {
         var editor = new ExternalEditor();
-        var text = editor.run()
-        // the text is also available in editor.text
+        var text = editor.run() // the text is also available in editor.text
+        
+        if (editor.last_exit_status !== 0) {
+            console.log("The editor exited with a non-zero code");
+        }
     } catch (err) {
         if (err instanceOf ExternalEditor.CreateFileError) {
             console.log('Failed to create the temporary file');
@@ -100,6 +103,7 @@ A full featured example
 - `editor.args` (array) Default arguments for the bin
 - `temp_file` (string) Path to temporary file. Can be changed, but be careful as the temporary file probably already 
     exists and would need be removed manually.
+- `last_exit_status` (number) The last exit code emitted from the editor.
     
 ## Errors
 

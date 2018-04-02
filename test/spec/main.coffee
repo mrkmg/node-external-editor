@@ -37,10 +37,13 @@ describe 'main', ->
   it 'run() returns correctly', ->
     text = @editor.run()
     assert.equal text, expectedResult
+    assert.equal @editor.last_exit_status, 0
 
   it 'runAsync() callbacks correctly', (cb) ->
+    ed = @editor
     @editor.runAsync (e, text) ->
       assert.equal text, expectedResult
+      assert.equal ed.last_exit_status, 0
       cb()
 
   it 'run() returns text same as editor.text', ->
@@ -50,6 +53,25 @@ describe 'main', ->
   it 'runAsync() callback text same as editor.text', (cb) ->
     @editor.runAsync (e, text) =>
       assert.equal text, @editor.text
+      cb()
+
+describe 'invalid exit code', ->
+
+  beforeEach ->
+    @editor = new ExternalEditor testingInput
+    @editor.editor.bin = "bash"
+    @editor.editor.args = ["-c", "exit 1"]
+
+  afterEach ->
+    @editor.cleanup()
+
+  it 'run()', ->
+    @editor.run()
+    assert.equal @editor.last_exit_status, 1
+
+  it 'runAsync()', (cb) ->
+    @editor.runAsync =>
+      assert.equal @editor.last_exit_status, 1
       cb()
 
 describe 'charsets', ->
