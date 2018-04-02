@@ -25,15 +25,15 @@ class ExternalEditor
 
   @editAsync: (text = '', callback) ->
     editor = new ExternalEditor(text)
-    editor.runAsync (error_run, response) ->
+    editor.runAsync (error_run, text) ->
       if not error_run
         try
           editor.cleanup()
+          setImmediate(callback, null, text) if typeof callback is 'function'
         catch error_cleanup
-          callback(error_cleanup) if typeof callback is 'function'
-        callback(null, response)
+          setImmediate(callback, error_cleanup, null) if typeof callback is 'function'
       else
-        callback(error_run) of typeof callback is 'function'
+        setImmediate(callback, error_run, null) if typeof callback is 'function'
 
 
   @CreateFileError: CreateFileError
@@ -46,6 +46,7 @@ class ExternalEditor
   editor:
     bin: undefined
     args: []
+  last_exit_status: undefined
 
   constructor: (@text = '') ->
     @determineEditor()
@@ -60,11 +61,11 @@ class ExternalEditor
       @launchEditorAsync =>
         try
           @readTemporaryFile()
-          callback(null, @text) if typeof callback is 'function'
+          setImmediate(callback, null, @text) if typeof callback is 'function'
         catch error_read
-          callback(error_read) if typeof callback is 'function'
+          setImmediate(callback, error_read, null) if typeof callback is 'function'
     catch error_launch
-      callback(error_launch) if typeof callback is 'function'
+      setImmediate(callback, error_launch, null) if typeof callback is 'function'
 
   cleanup: =>
     @removeTemporaryFile()
@@ -73,8 +74,8 @@ class ExternalEditor
     ed = if /^win/.test process.platform then 'notepad' else 'vim'
     editor = process.env.VISUAL or process.env.EDITOR or ed
     args = editor.split /\s+/
-    @bin = args.shift()
-    @args = args
+    @editor.bin = args.shift()
+    @editor.args = args
 
   createTemporaryFile: =>
     try
@@ -100,14 +101,17 @@ class ExternalEditor
 
   launchEditor: =>
     try
-      SpawnSync @bin, @args.concat([@temp_file]), stdio: 'inherit'
+      run = SpawnSync @editor.bin, @editor.args.concat([@temp_file]), stdio: 'inherit'
+      @last_exit_status = run.status
     catch e
       throw new LaunchEditorError e
 
   launchEditorAsync: (callback) =>
     try
-      child_process = Spawn @bin, @args.concat([@temp_file]), stdio: 'inherit'
-      child_process.on 'exit', -> callback() if typeof callback is 'function'
+      child_process = Spawn @editor.bin, @editor.args.concat([@temp_file]), stdio: 'inherit'
+      child_process.on 'exit', (code) =>
+        @last_exit_status = code
+        callback() if typeof callback is 'function'
     catch e
       throw new LaunchEditorError e
 
