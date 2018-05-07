@@ -1,11 +1,11 @@
 sudo: false
 node_js:
+  - 10
   - 9
   - 8
   - 7
   - 6
   - 5
   - 4
-  - .12
 language: node_js
 script: npm test
