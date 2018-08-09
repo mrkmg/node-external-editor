@@ -49,6 +49,28 @@ export function editAsync(text: string = "", callback: StringCallback) {
 }
 
 export class ExternalEditor {
+    private static splitStringBySpace(str: string) {
+        const pieces: string[] = [];
+
+        let currentString = "";
+        for (let strIndex = 0; strIndex < str.length; strIndex++) {
+            const currentLetter = str[strIndex];
+
+            if (strIndex > 0 && currentLetter === " " && str[strIndex - 1] !== "\\" && currentString.length > 0) {
+                pieces.push(currentString);
+                currentString = "";
+            } else {
+                currentString += currentLetter;
+            }
+        }
+
+        if (currentString.length > 0) {
+            pieces.push(currentString);
+        }
+
+        return pieces;
+    }
+
     public text: string = "";
     public tempFile: string;
     public editor: IEditorParams;
@@ -102,8 +124,9 @@ export class ExternalEditor {
             /^win/.test(process.platform) ? "notepad" :
             "vim";
 
-        const editorOpts = editor.split(/\s+/);
+        const editorOpts = ExternalEditor.splitStringBySpace(editor).map((piece: string) => piece.replace("\\ ", " "));
         const bin = editorOpts.shift();
+
         this.editor = {args: editorOpts, bin};
     }
 

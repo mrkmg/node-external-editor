@@ -17,7 +17,7 @@ rl.on('line', function () {
     // Get response, remove all lines starting with #, remove any trailing newlines.
     var response = editor.run().replace(/^#.*\n?/gm, '').replace(/\n+$/g, '').trim();
 
-    if (editor.last_exit_status !== 0) {
+    if (editor.lastExitStatus !== 0) {
       process.stderr.write("WARN: The editor exited with a non-zero status\n\n")
     }
 

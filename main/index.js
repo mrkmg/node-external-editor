@@ -54,6 +54,24 @@ var ExternalEditor = /** @class */ (function () {
         this.determineEditor();
         this.createTemporaryFile();
     }
+    ExternalEditor.splitStringBySpace = function (str) {
+        var pieces = [];
+        var currentString = "";
+        for (var strIndex = 0; strIndex < str.length; strIndex++) {
+            var currentLetter = str[strIndex];
+            if (strIndex > 0 && currentLetter === " " && str[strIndex - 1] !== "\\" && currentString.length > 0) {
+                pieces.push(currentString);
+                currentString = "";
+            }
+            else {
+                currentString += currentLetter;
+            }
+        }
+        if (currentString.length > 0) {
+            pieces.push(currentString);
+        }
+        return pieces;
+    };
     Object.defineProperty(ExternalEditor.prototype, "temp_file", {
         get: function () {
             console.log("DEPRECATED: temp_file. Use tempFile moving forward.");
@@ -100,7 +118,7 @@ var ExternalEditor = /** @class */ (function () {
             process.env.EDITOR ? process.env.EDITOR :
                 /^win/.test(process.platform) ? "notepad" :
                     "vim";
-        var editorOpts = editor.split(/\s+/);
+        var editorOpts = ExternalEditor.splitStringBySpace(editor).map(function (piece) { return piece.replace("\\ ", " "); });
         var bin = editorOpts.shift();
         this.editor = { args: editorOpts, bin: bin };
     };
