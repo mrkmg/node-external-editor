@@ -12,6 +12,7 @@ export { CreateFileError, LaunchEditorError, ReadFileError, RemoveFileError };
 export declare function edit(text?: string): string;
 export declare function editAsync(text: string, callback: StringCallback): void;
 export declare class ExternalEditor {
+    private static splitStringBySpace(str);
     text: string;
     tempFile: string;
     editor: IEditorParams;
