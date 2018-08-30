@@ -1,3 +1,9 @@
+/***
+ * Node External Editor
+ *
+ * Kevin Gravier <kevin@mrkmg.com>
+ * MIT 2018
+ */
 import { CreateFileError } from "./errors/CreateFileError";
 import { LaunchEditorError } from "./errors/LaunchEditorError";
 import { ReadFileError } from "./errors/ReadFileError";
@@ -12,7 +18,7 @@ export { CreateFileError, LaunchEditorError, ReadFileError, RemoveFileError };
 export declare function edit(text?: string): string;
 export declare function editAsync(text: string, callback: StringCallback): void;
 export declare class ExternalEditor {
-    private static splitStringBySpace(str);
+    private static splitStringBySpace;
     text: string;
     tempFile: string;
     editor: IEditorParams;
@@ -23,10 +29,10 @@ export declare class ExternalEditor {
     run(): string;
     runAsync(callback: StringCallback): void;
     cleanup(): void;
-    private determineEditor();
-    private createTemporaryFile();
-    private readTemporaryFile();
-    private removeTemporaryFile();
-    private launchEditor();
-    private launchEditorAsync(callback);
+    private determineEditor;
+    private createTemporaryFile;
+    private readTemporaryFile;
+    private removeTemporaryFile;
+    private launchEditor;
+    private launchEditorAsync;
 }
