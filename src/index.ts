@@ -8,7 +8,7 @@
 import {detect} from "chardet";
 import {spawn, spawnSync} from "child_process";
 import {readFileSync, unlinkSync, writeFileSync} from "fs";
-import {decode} from "iconv-lite";
+import {decode, encodingExists} from "iconv-lite";
 import {tmpNameSync} from "tmp";
 import {CreateFileError} from "./errors/CreateFileError";
 import {LaunchEditorError} from "./errors/LaunchEditorError";
@@ -145,7 +145,13 @@ export class ExternalEditor {
             if (tempFileBuffer.length === 0) {
                 this.text = "";
             } else {
-                const encoding = detect(tempFileBuffer).toString();
+                let encoding = detect(tempFileBuffer).toString();
+
+                if (!encodingExists(encoding)) {
+                    // Probably a bad idea, but will at least prevent crashing
+                    encoding = "utf8";
+                }
+
                 this.text = decode(tempFileBuffer, encoding);
             }
         } catch (readFileError) {
