@@ -139,6 +139,10 @@ var ExternalEditor = /** @class */ (function () {
             }
             else {
                 var encoding = chardet_1.detect(tempFileBuffer).toString();
+                if (!iconv_lite_1.encodingExists(encoding)) {
+                    // Probably a bad idea, but will at least prevent crashing
+                    encoding = "utf8";
+                }
                 this.text = iconv_lite_1.decode(tempFileBuffer, encoding);
             }
         }
