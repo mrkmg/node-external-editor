@@ -2,7 +2,7 @@
  * Node External Editor
  *
  * Kevin Gravier <kevin@mrkmg.com>
- * MIT 2018
+ * MIT 2019
  */
 import { CreateFileError } from "./errors/CreateFileError";
 import { LaunchEditorError } from "./errors/LaunchEditorError";
@@ -15,7 +15,7 @@ export interface IEditorParams {
 export interface IFileOptions {
     prefix?: string;
     postfix?: string;
-    mode?: string;
+    mode?: number;
     template?: string;
     dir?: string;
 }

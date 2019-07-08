@@ -7,7 +7,7 @@
 
 A node module to edit a string with a users preferred text editor using $VISUAL or $ENVIRONMENT.
 
-Version: 3.0.3
+Version: 3.1.0
 
 As of version 3.0.0, the minimum version of node supported is 4.
 
