@@ -3,7 +3,7 @@
  * Node External Editor
  *
  * Kevin Gravier <kevin@mrkmg.com>
- * MIT 2018
+ * MIT 2019
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 var chardet_1 = require("chardet");
@@ -21,7 +21,7 @@ var RemoveFileError_1 = require("./errors/RemoveFileError");
 exports.RemoveFileError = RemoveFileError_1.RemoveFileError;
 function edit(text, fileOptions) {
     if (text === void 0) { text = ""; }
-    var editor = new ExternalEditor(text);
+    var editor = new ExternalEditor(text, fileOptions);
     editor.run();
     editor.cleanup();
     return editor.text;
@@ -129,7 +129,11 @@ var ExternalEditor = /** @class */ (function () {
     ExternalEditor.prototype.createTemporaryFile = function () {
         try {
             this.tempFile = tmp_1.tmpNameSync(this.fileOptions);
-            fs_1.writeFileSync(this.tempFile, this.text, { encoding: "utf8" });
+            var opt = { encoding: "utf8" };
+            if (this.fileOptions.hasOwnProperty("mode")) {
+                opt.mode = this.fileOptions.mode;
+            }
+            fs_1.writeFileSync(this.tempFile, this.text, opt);
         }
         catch (createFileError) {
             throw new CreateFileError_1.CreateFileError(createFileError);
