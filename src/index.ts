@@ -2,12 +2,12 @@
  * Node External Editor
  *
  * Kevin Gravier <kevin@mrkmg.com>
- * MIT 2018
+ * MIT 2019
  */
 
 import {detect} from "chardet";
 import {spawn, spawnSync} from "child_process";
-import {readFileSync, unlinkSync, writeFileSync} from "fs";
+import {readFileSync, unlinkSync, WriteFileOptions, writeFileSync} from "fs";
 import {decode, encodingExists} from "iconv-lite";
 import {tmpNameSync} from "tmp";
 import {CreateFileError} from "./errors/CreateFileError";
@@ -20,19 +20,27 @@ export interface IEditorParams {
     bin: string;
 }
 
+export interface IFileOptions {
+    prefix?: string;
+    postfix?: string;
+    mode?: number;
+    template?: string;
+    dir?: string;
+}
+
 export type StringCallback = (err: Error, result: string) => void;
 export type VoidCallback = () => void;
 export {CreateFileError, LaunchEditorError, ReadFileError, RemoveFileError};
 
-export function edit(text: string = "") {
-    const editor = new ExternalEditor(text);
+export function edit(text: string = "", fileOptions?: IFileOptions) {
+    const editor = new ExternalEditor(text, fileOptions);
     editor.run();
     editor.cleanup();
     return editor.text;
 }
 
-export function editAsync(text: string = "", callback: StringCallback) {
-    const editor = new ExternalEditor(text);
+export function editAsync(text: string = "", callback: StringCallback, fileOptions?: IFileOptions) {
+    const editor = new ExternalEditor(text, fileOptions);
     editor.runAsync((err: Error, result: string) => {
         if (err) {
             setImmediate(callback, err, null);
@@ -75,6 +83,7 @@ export class ExternalEditor {
     public tempFile: string;
     public editor: IEditorParams;
     public lastExitStatus: number;
+    private fileOptions: IFileOptions = {};
 
     public get temp_file() {
         console.log("DEPRECATED: temp_file. Use tempFile moving forward.");
@@ -86,8 +95,13 @@ export class ExternalEditor {
         return this.lastExitStatus;
     }
 
-    constructor(text: string = "") {
+    constructor(text: string = "", fileOptions?: IFileOptions) {
         this.text = text;
+
+        if (fileOptions) {
+            this.fileOptions = fileOptions;
+        }
+
         this.determineEditor();
         this.createTemporaryFile();
     }
@@ -132,8 +146,12 @@ export class ExternalEditor {
 
     private createTemporaryFile() {
         try {
-            this.tempFile = tmpNameSync({});
-            writeFileSync(this.tempFile, this.text, {encoding: "utf8"});
+            this.tempFile = tmpNameSync(this.fileOptions);
+            const opt: WriteFileOptions = {encoding: "utf8"};
+            if (this.fileOptions.hasOwnProperty("mode")) {
+                opt.mode = this.fileOptions.mode;
+            }
+            writeFileSync(this.tempFile, this.text, opt);
         } catch (createFileError) {
             throw new CreateFileError(createFileError);
         }

@@ -1,5 +1,8 @@
 {
+  "files_to_commit": ["main/**/*"],
   "pre_commit_commands": [
+    "npm run lint",
+    "npm run compile",
     "npm test"
   ],
   "post_complete_commands": [

@@ -9,8 +9,9 @@
 require("es6-shim");
 
 import Chai = require("chai");
-import {readFileSync, writeFileSync} from "fs";
+import {readFileSync, statSync, writeFileSync} from "fs";
 import {encode} from "iconv-lite";
+import {dirname} from "path";
 import {edit, editAsync, ExternalEditor} from "../../src";
 const assert = Chai.assert;
 
@@ -105,6 +106,52 @@ describe("invalid exit code", () => {
             assert.equal(editor.lastExitStatus, 1);
             cb();
         });
+    });
+});
+
+describe("custom options", () => {
+    let editor: ExternalEditor = null;
+
+    afterEach(() => {
+        if (editor) {
+            editor.cleanup();
+        }
+        editor = null;
+    });
+
+    it("prefix", () => {
+        editor = new ExternalEditor("testing", {
+            prefix: "pre",
+        });
+
+        assert.match(editor.tempFile, /.+\/pre.+$/);
+    });
+
+    it("postfix", () => {
+        editor = new ExternalEditor("testing", {
+            postfix: "end.post",
+        });
+
+        assert.match(editor.tempFile, /.+end\.post$/);
+    });
+
+    it("dir", () => {
+        editor = new ExternalEditor("testing", {
+            dir: __dirname,
+        });
+
+        assert.equal(dirname(editor.tempFile), __dirname);
+    });
+
+    it("mode", () => {
+        editor = new ExternalEditor("testing", {
+            mode: 0o755,
+        });
+
+        const stat = statSync(editor.tempFile);
+        const int = parseInt(stat.mode.toString(8), 10);
+
+        assert.equal(int, 100755);
     });
 });
 
