@@ -111,7 +111,7 @@ A full featured example
 **Config Options**
 
 - `prefix` (string) *Optional* A prefix for the file name.
-- `postfix` (string; *Optional* A postfix for the file name. Useful if you want to provide an extension.
+- `postfix` (string) *Optional* A postfix for the file name. Useful if you want to provide an extension.
 - `mode` (number) *Optional* Which mode to create the file with. e.g. 644
 - `template` (string) *Optional* A template for the filename. See [tmp](https://www.npmjs.com/package/tmp).
 - `dir` (string) *Optional* Which path to store the file.
